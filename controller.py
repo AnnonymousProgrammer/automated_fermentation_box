@@ -1,3 +1,4 @@
+import json
 from threading import Thread
 from time import sleep
 
@@ -17,14 +18,21 @@ class Controller:
         self.__running = True
 
     def __control(self):
+        count = 0
         while self.__running:
             if self.__tracer.get_temperature()[-1] < self.__target_temp and self.__relais.is_opened():
                 self.__relais.close_circuit()
+                print("close circuit")
             if self.__tracer.get_temperature()[-1] > self.__target_temp and self.__relais.is_closed():
                 self.__relais.open_circuit()
+                print("open circuit")
             self.__control_states.append(self.__relais.is_closed())
             while len(self.__control_states) > 180:
                 self.__control_states.pop(0)
+            count = count + 1
+            if count % 60 == 0:
+                with open("control" + str(int(count / 60)) + ".json", "w") as file:
+                    json.dump(self.__control_states, file)
             sleep(60)
 
     def __delete(self):

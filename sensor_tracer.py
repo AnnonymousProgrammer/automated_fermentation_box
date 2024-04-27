@@ -1,3 +1,4 @@
+import json
 from dht22_sensor import DHT22Sensor
 from threading import Thread
 from time import sleep
@@ -40,6 +41,7 @@ class SensorTracer:
         In case of an overflow the oldest values are removed. Measures if and only if
         marked as running.
         '''
+        count = 0
         while self.__running:
             humidity, temperature = self.__dht22_sensor.read_values()
             image = self.__camera.capture()
@@ -50,6 +52,10 @@ class SensorTracer:
                 self.__humidity.pop(0)
                 self.__temperature.pop(0)
                 self.__images.pop(0)
+            count = count + 1
+            if count % 60 == 0:
+                with open("sensor" + str(int(count / 60)) + ".json", "w") as file:
+                    json.dump([self.__temperature, self.__humidity], file)
             sleep(self.__period)
     
     def __start_measuring(self):
@@ -65,6 +71,8 @@ class SensorTracer:
         self.__running = False
 
     def get_temperature(self):
+        print(len(self.__temperature))
+        print(self.__temperature)
         return tuple(self.__temperature)
 
     def get_humidity(self):

@@ -3,11 +3,18 @@ import cv2
 class Camera:
     
     def __init__(self):
-        self.__camera = cv2.VideoCapture(0)
+        # self.__camera = cv2.VideoCapture(0)
+        self.__old = []
 
     def capture(self):
-        return_value, image = self.__camera.read()
-        return image
+        try:
+            camera = cv2.VideoCapture(0)
+            return_value, image = camera.read()
+            self.__old = image
+            camera.release()
+        except Exception as _:
+            pass
+        return self.__old
 
     def debug_snapshot(self):
         image = self.capture()
@@ -18,7 +25,8 @@ class Camera:
         '''
         destructor to ensure that the camera is closed properly.
         '''
-        self.__camera.release()
+        pass
+        # self.__camera.release()
 
 if __name__ == '__main__':
     Camera().debug_snapshot()
