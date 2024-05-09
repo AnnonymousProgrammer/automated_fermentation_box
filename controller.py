@@ -1,3 +1,4 @@
+import datetime
 import json
 from threading import Thread
 from time import sleep
@@ -10,6 +11,8 @@ class Controller:
         self.__tracer = tracer
         self.__running = False
         self.__control_states =  [False]
+        self.__temps = []
+        self.__times = [datetime.datetime.now().isoformat()]
         self.__start_control()
         self.__thread = Thread(target=self.__control)
         self.__thread.start()
@@ -20,20 +23,25 @@ class Controller:
     def __control(self):
         count = 0
         while self.__running:
-            if self.__tracer.get_temperature()[-1] < self.__target_temp and self.__relais.is_opened():
+            curr_temp = self.__tracer.get_temp_now()
+            if curr_temp < (self.__target_temp - 0.25) and self.__relais.is_opened():
                 self.__relais.close_circuit()
                 print("close circuit")
-            if self.__tracer.get_temperature()[-1] > self.__target_temp and self.__relais.is_closed():
+            if curr_temp > (self.__target_temp - 0.25) and self.__relais.is_closed():
                 self.__relais.open_circuit()
                 print("open circuit")
             self.__control_states.append(self.__relais.is_closed())
-            while len(self.__control_states) > 180:
+            self.__temps.append(curr_temp)
+            self.__times.append(datetime.datetime.now().isoformat())
+            while len(self.__control_states) > 1800:
                 self.__control_states.pop(0)
+                self.__times.pop(0)
+                self.__temps.pop(0)
             count = count + 1
-            if count % 60 == 0:
-                with open("control" + str(int(count / 60)) + ".json", "w") as file:
-                    json.dump(self.__control_states, file)
-            sleep(60)
+            if count % (1800) == 0:
+                with open("control" + str(int(count / 1800)) + ".json", "w") as file:
+                    json.dump([self.__control_states, self.__temps, self.__times], file)
+            sleep(1)
 
     def __delete(self):
         self.__running = False
