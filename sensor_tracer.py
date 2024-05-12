@@ -1,3 +1,4 @@
+import cv2
 import json
 from dht22_sensor import DHT22Sensor
 from threading import Thread
@@ -12,7 +13,7 @@ class SensorTracer:
     longtime usage.
     '''
 
-    def __init__(self, dht22_sensor, period=30):
+    def __init__(self, dht22_sensor, period=300):
         '''
         @param dht22_sensor: instance of the DHT22 Sensor Class
         @param period: sampling period in seconds
@@ -48,6 +49,7 @@ class SensorTracer:
         while self.__running:
             humidity, temperature = self.__dht22_sensor.read_values()
             image = self.__camera.capture()
+            cv2.imwrite("/home/pi/git/images/" + str(datetime.datetime.now().timestamp()) + ".png")
             self.__times.append(datetime.datetime.now().isoformat())
             self.__images.append(image)
             self.__humidity.append(humidity)
