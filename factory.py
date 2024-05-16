@@ -6,7 +6,6 @@ from relais import Relais
 from controller import Controller
 from webinterface import WebInterface
 
-
 class Factory:
 
     def __init__(self, filename):
@@ -34,6 +33,8 @@ class Factory:
                 return value
 
     def __read_ini_file(self):
+        if not os.path.exists(self.__filename):
+            print("config file not found: " + self.__filename)
         config = configparser.ConfigParser()
         config.read(self.__filename)
         
@@ -59,5 +60,7 @@ class Factory:
 
 if __name__ == '__main__':
     # actual main function
-    config_path = os.path.abspath(__file__) + os.sep + "config.ini"
+    root = os.path.abspath(__file__)
+    root = root[:(len(root) - len(os.path.basename(root)))]
+    config_path = root + os.sep + "config.ini"
     website = Factory(config_path).build_application()
