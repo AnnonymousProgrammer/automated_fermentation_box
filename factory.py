@@ -49,11 +49,18 @@ class Factory:
 
     def build_application(self):
         config_dict = self.__read_ini_file()
+        print("set DHT22 sensor pin to: " + str(config_dict["DHT22"]["gpio_pin"]))
         sensor = DHT22Sensor(config_dict["DHT22"]["gpio_pin"])
+        print("set sensor tracer period to: " + str(config_dict["Tracer"]["period_s"]))
+        print("set sensor tracer tolerance to: " + str(config_dict["Tracer"]["error_tolerance"]))
         tracer = SensorTracer(sensor, config_dict["Tracer"]["period_s"], config_dict["Tracer"]["error_tolerance"])
-        print("sensor tracer initialized")
+        print("set relay pin to: " + str(config_dict["Relay"]["gpio_pin"]))
         relais = Relais(config_dict["Relay"]["gpio_pin"])
         relais.open_circuit()
+        print("set controller period to: " + str(config_dict["Tracer"]["period_s"]))
+        print("set controller buffer size to: " + str(config_dict["Tracer"]["buffer_size"]))
+        print("set controller target temperature to: " + str(config_dict["Tracer"]["target_temp"]))
+        print("set controller target temperature offset to: " + str(config_dict["Tracer"]["offset"]))
         my_con = Controller(relais, tracer, config_dict["Tracer"]["target_temp"], config_dict["Tracer"]["offset"], 
                             config_dict["Tracer"]["period_s"], config_dict["Tracer"]["buffer_size"])
         return WebInterface(tracer, my_con, config_dict["Tracer"]["period_s"])
