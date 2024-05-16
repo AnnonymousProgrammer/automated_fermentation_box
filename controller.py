@@ -26,13 +26,13 @@ class Controller:
         self.__sampling_period = sampling_period
         self.__buffer_size = buffer_size
         self.__start_control()
-        self.__thread = Thread(target=self.__control)
+        self.__thread = Thread(target=self.__control_two_point)
         self.__thread.start()
 
     def __start_control(self):
         self.__running = True
 
-    def __control(self):
+    def __control_two_point(self):
         '''
         Two point control algorithm that runs in an infinity loop until the boolean flag __running is set to false.
         As well saves the control history in a buffer and periodically to disc.
