@@ -57,13 +57,13 @@ class Factory:
         print("set relay pin to: " + str(config_dict["Relay"]["gpio_pin"]))
         relais = Relais(config_dict["Relay"]["gpio_pin"])
         relais.open_circuit()
-        print("set controller period to: " + str(config_dict["Tracer"]["period_s"]))
-        print("set controller buffer size to: " + str(config_dict["Tracer"]["buffer_size"]))
-        print("set controller target temperature to: " + str(config_dict["Tracer"]["target_temp"]))
-        print("set controller target temperature offset to: " + str(config_dict["Tracer"]["offset"]))
-        my_con = Controller(relais, tracer, config_dict["Tracer"]["target_temp"], config_dict["Tracer"]["offset"], 
-                            config_dict["Tracer"]["period_s"], config_dict["Tracer"]["buffer_size"])
-        return WebInterface(tracer, my_con, config_dict["Tracer"]["period_s"])
+        print("set controller period to: " + str(config_dict["Controller"]["period_s"]))
+        print("set controller buffer size to: " + str(config_dict["Controller"]["buffer_size"]))
+        print("set controller target temperature to: " + str(config_dict["Controller"]["target_temp"]))
+        print("set controller target temperature offset to: " + str(config_dict["Controller"]["offset"]))
+        my_con = Controller(relais, tracer, config_dict["Controller"]["target_temp"], config_dict["Controller"]["offset"], 
+                            config_dict["Controller"]["period_s"], config_dict["Controller"]["buffer_size"])
+        return WebInterface(tracer, my_con, config_dict["Website"]["period_s"])
 
 if __name__ == '__main__':
     # actual main function
