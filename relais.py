@@ -29,6 +29,7 @@ class Relais:
         GPIO.cleanup()
         
 if __name__ == '__main__':
+    # local test
     relais = Relais(4)
     print(relais.is_closed())
     print(relais.is_opened())

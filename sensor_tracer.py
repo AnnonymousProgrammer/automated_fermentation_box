@@ -13,15 +13,17 @@ class SensorTracer:
     longtime usage.
     '''
 
-    def __init__(self, dht22_sensor, period=300):
+    def __init__(self, dht22_sensor, period=300, error_tolerance=0.5):
         '''
         @param dht22_sensor: instance of the DHT22 Sensor Class
         @param period: sampling period in seconds
+        @param error_tolerance: tolerance to detect measurement errors
         '''
         self.__dht22_sensor = dht22_sensor
         self.__camera = Camera()
         self.__running = False
         self.__period = 60
+        self.__error_tolerance = error_tolerance
         # lists that serve as buffers
         self.__humidity = []
         self.__temperature = []
@@ -60,9 +62,9 @@ class SensorTracer:
                 self.__images.pop(0)
                 self.__times.pop(0)
             count = count + 1
-            if count % 60 == 0:
-                print("sensor tracer" + str(int(count / 60)))
-                with open("sensor" + str(int(count / 60)) + ".json", "w") as file:
+            if count % self.__period == 0:
+                print("sensor tracer" + str(int(count / self.__period)))
+                with open("sensor" + str(int(count / self.__period)) + ".json", "w") as file:
                     json.dump([self.__temperature, self.__humidity, self.__times], file)
             sleep(self.__period)
 
@@ -79,17 +81,18 @@ class SensorTracer:
         self.__running = False
 
     def get_temp_now(self):
+        '''
+        measures the current temperature and filters out measurement errors.
+        '''
         curr = self.__dht22_sensor.read_values()[1]
         if curr is not None:
-           if abs(curr - self.__old) > 0.5:
+           if abs(curr - self.__old) > self.__error_tolerance:
                return self.__old
            self.__old = curr
            return curr
         return self.__old
 
     def get_temperature(self):
-        #print(len(self.__temperature))
-        #print(self.__temperature)
         return tuple(self.__temperature)
 
     def get_humidity(self):
@@ -99,6 +102,7 @@ class SensorTracer:
         return tuple(self.__images)
 
 if __name__ == '__main__':
+    # local test
     sensor = DHT22Sensor()
     tracer = SensorTracer(sensor)
     print(tracer.get_temp_now())

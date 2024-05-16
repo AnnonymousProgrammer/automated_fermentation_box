@@ -9,6 +9,11 @@ from time import sleep
 class WebInterface:
 
     def __init__(self, tracer, controller, period=60):
+        '''
+        @param tracer: instance of sensor_tracer class.
+        @param controller: instance of the controller class.
+        @param period: update period of the website
+        '''
         self.__tracer = tracer
         self.__controller = controller
         self.__period = period
@@ -70,6 +75,7 @@ class WebInterface:
             sleep(self.get_period())
 
 if __name__ == '__main__':
+    # small local test to check if it is working
     from dht22_sensor import DHT22Sensor
     from sensor_tracer import SensorTracer
     from relais import Relais
