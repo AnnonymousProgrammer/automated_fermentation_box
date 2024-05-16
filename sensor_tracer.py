@@ -51,7 +51,6 @@ class SensorTracer:
         while self.__running:
             humidity, temperature = self.__dht22_sensor.read_values()
             image = self.__camera.capture()
-            cv2.imwrite("/home/pi/git/images/" + str(datetime.datetime.now().timestamp()) + ".png")
             self.__times.append(datetime.datetime.now().isoformat())
             self.__images.append(image)
             self.__humidity.append(humidity)
