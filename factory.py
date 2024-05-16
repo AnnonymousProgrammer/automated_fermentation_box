@@ -1,4 +1,5 @@
 import configparser
+import os
 from dht22_sensor import DHT22Sensor
 from sensor_tracer import SensorTracer
 from relais import Relais
@@ -58,4 +59,5 @@ class Factory:
 
 if __name__ == '__main__':
     # actual main function
-    website = Factory().build_application()
+    config_path = os.path.abspath(__file__) + os.sep + "config.ini"
+    website = Factory(config_path).build_application()
